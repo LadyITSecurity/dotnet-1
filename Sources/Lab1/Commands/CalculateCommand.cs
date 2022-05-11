@@ -13,10 +13,12 @@ namespace Lab1.Commands
         }
 
         private readonly IFunctionsRepository _functionsRepository;
+        private readonly FunctionColorMatcher _colorMatcher;
 
-        public CalculateCommand(IFunctionsRepository functionsRepository)
+        public CalculateCommand(IFunctionsRepository functionsRepository, FunctionColorMatcher colorMatcher)
         {
             _functionsRepository = functionsRepository;
+            _colorMatcher = colorMatcher;
         }
 
 
@@ -33,8 +35,11 @@ namespace Lab1.Commands
             table.AddColumn(new TableColumn("[white]Function[/]"));
             table.AddColumn(new TableColumn("[white]Derivative[/]"));
             table.AddColumn(new TableColumn("[white]Antiderivative[/]"));
-            table.AddRow($"[yellow]{f.GetType().Name}[/]", $"[yellow]{f.ToString()}[/]", $"[yellow]{f.GetDerivative()}[/]", $"[yellow]{f.GetAntiderivative()} + C[/]");
-
+            var color = _colorMatcher[f.GetType()];
+            table.AddRow($"{color}{f.GetType().Name}[/]",
+                $"{color}{f.ToString()}[/]",
+                $"{color}{f.GetDerivative()}[/]",
+                $"{color}{f.GetAntiderivative()} + C[/]");
             AnsiConsole.Write(table);
             AnsiConsole.WriteLine(Math.Round(f.Calculate(
                         AnsiConsole.Prompt(new TextPrompt<double>("[blue]Enter the x value to calculate the value of the function: [/]"))), 3).ToString());

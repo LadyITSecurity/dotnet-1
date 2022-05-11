@@ -14,10 +14,12 @@ namespace Lab1.Commands
         }
 
         private readonly IFunctionsRepository _functionsRepository;
+        private readonly FunctionColorMatcher _colorMatcher;
 
-        public PrintAllFunctionsCommand(IFunctionsRepository functionsRepository)
+        public PrintAllFunctionsCommand(IFunctionsRepository functionsRepository, FunctionColorMatcher colorMatcher)
         {
             _functionsRepository = functionsRepository;
+            _colorMatcher = colorMatcher;
         }
 
 
@@ -41,29 +43,15 @@ namespace Lab1.Commands
             int maxCount = 10;
             foreach (Function f in functions)
             {
-                switch (f.GetType().Name)
-                {
-                    case "ConstantFunction":
-                        table.AddRow($"[yellow]{f.GetType().Name}[/]", $"[yellow]{f.ToString()}[/]", $"[yellow]{f.GetDerivative()}[/]", $"[yellow]{f.GetAntiderivative()} + C[/]");
-                        break;
-                    case "LinearFunction":
-                        table.AddRow($"[green]{f.GetType().Name}[/]", $"[green]{f.ToString()}[/]", $"[green]{f.GetDerivative()}[/]", $"[green]{f.GetAntiderivative()} + C[/]");
-                        break;
-                    case "QuadraticFunction":
-                        table.AddRow($"[magenta]{f.GetType().Name}[/]", $"[magenta]{f.ToString()}[/]", $"[magenta]{f.GetDerivative()}[/]", $"[magenta]{f.GetAntiderivative()} + C[/]");
-                        break;
-                    case "SineFunction":
-                        table.AddRow($"[cyan]{f.GetType().Name}[/]", $"[cyan]{f.ToString()}[/]", $"[cyan]{f.GetDerivative()}[/]", $"[cyan]{f.GetAntiderivative()} + C[/]");
-                        break;
-                    case "CosineFunction":
-                        table.AddRow($"[blue]{f.GetType().Name}[/]", $"[blue]{f.ToString()}[/]", $"[blue]{f.GetDerivative()}[/]", $"[blue]{f.GetAntiderivative()} + C[/]");
-                        break;
-                }
+                var color = _colorMatcher[f.GetType()];
+                table.AddRow($"{color}{f.GetType().Name}[/]",
+                    $"{color}{f.ToString()}[/]",
+                    $"{color}{f.GetDerivative()}[/]",
+                    $"{color}{f.GetAntiderivative()} + C[/]");
                 count += 1;
                 if (count >= maxCount && functions.Count > maxCount)
                 {
                     table.AddRow("[white]...[/]", "[white]...[/]", "[white]...[/]");
-                    break;
                 }
             }
             AnsiConsole.Write(table);

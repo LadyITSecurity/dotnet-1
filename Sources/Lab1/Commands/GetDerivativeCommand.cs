@@ -13,10 +13,12 @@ namespace Lab1.Commands
         }
 
         private readonly IFunctionsRepository _functionsRepository;
+        private readonly FunctionColorMatcher _colorMatcher;
 
-        public GetDerivativeCommand(IFunctionsRepository functionsRepository)
+        public GetDerivativeCommand(IFunctionsRepository functionsRepository, FunctionColorMatcher colorMatcher)
         {
             _functionsRepository = functionsRepository;
+            _colorMatcher = colorMatcher;
         }
 
 
@@ -33,8 +35,13 @@ namespace Lab1.Commands
             table.AddColumn(new TableColumn("[white]Function[/]"));
             table.AddColumn(new TableColumn("[white]Derivative[/]"));
             table.AddColumn(new TableColumn("[white]Antiderivative[/]"));
-            table.AddRow($"[yellow]{f.GetType().Name}[/]", $"[yellow]{f.ToString()}[/]", $"[yellow]{f.GetDerivative()}[/]", $"[yellow]{f.GetAntiderivative()} + C[/]");
-            
+
+            var color = _colorMatcher[f.GetType()];
+            table.AddRow($"{color}{f.GetType().Name}[/]",
+                $"{color}{f.ToString()}[/]",
+                $"{color}{f.GetDerivative()}[/]",
+                $"{color}{f.GetAntiderivative()} + C[/]");
+
             AnsiConsole.Write(table);
             return 0;
         }

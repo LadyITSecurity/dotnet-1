@@ -29,7 +29,10 @@ namespace Lab1.Repositories
             }
             var xmlSerializer = new XmlSerializer(typeof(List<Function>));
             using var fileStream = File.OpenRead(StorageFileName);
-            _functions = (List<Function>)xmlSerializer.Deserialize(fileStream);
+            var result = (List<Function>?)xmlSerializer.Deserialize(fileStream);
+            if (result is null)
+                throw new InvalidOperationException();
+            _functions = result;
             if (_functions == null)
                 throw new ArgumentNullException(nameof(_functions));
             return _functions;
